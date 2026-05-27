@@ -1,0 +1,7 @@
+Flask>=3.0.2
+google-genai>=2.5.0
+chromadb>=0.4.24
+requests>=2.31.0
+langchain>=0.1.12
+sentence-transformers>=2.6.1
+gunicorn>=21.2.0
