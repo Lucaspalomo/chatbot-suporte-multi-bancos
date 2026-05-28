@@ -1,37 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><title>Portal Inpera Play</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inpera Suporte</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#0f172a] text-white min-h-screen pb-10">
-    <nav class="bg-slate-900 px-8 py-4 flex items-center justify-between border-b border-blue-500/30">
-        <span class="text-blue-500 font-black text-2xl tracking-wider">INPERA PLAY</span>
-        <span class="text-xs bg-blue-600/20 text-blue-400 px-3 py-1 rounded border border-blue-500/40">Ambiente Inpera</span>
+<body class="bg-[#f4f5f7] text-gray-800 min-h-screen pb-10 font-sans">
+
+    <!-- NAVBAR: Estilo Inpera -->
+    <nav class="bg-[#1f1f24] px-8 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+        <span class="text-[#d1953f] font-black text-2xl tracking-wider cursor-pointer">INPERA</span>
+        <div class="flex items-center gap-3">
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs bg-[#d1953f]/20 text-[#d1953f] px-3 py-1 rounded border border-[#d1953f]/30 font-semibold">Ambiente Inpera</span>
+        </div>
     </nav>
     
-    <div class="px-8 my-8">
-        <h2 class="text-lg font-bold mb-4 text-gray-300">Treinamentos Disponíveis - Inpera</h2>
-        <div class="flex gap-4 overflow-x-auto pb-4">
-            {% for curso in cursos %}
-            <div class="min-w-[280px] bg-slate-800 rounded-md overflow-hidden border border-slate-700">
-                <div class="h-36 bg-cover bg-center" style="background-image: url('{{ curso.imagem }}')"></div>
+    <!-- SEÇÃO DE TREINAMENTOS -->
+    <div class="px-8 my-8 max-w-7xl mx-auto">
+        <h2 class="text-lg font-bold mb-4 text-gray-700 flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap text-[#d1953f]"></i> Treinamentos Disponíveis - Inpera
+        </h2>
+        
+        <!-- Carrossel de Cursos -->
+        <div class="flex gap-6 overflow-x-auto pb-4">
+            {% for curso in cursos_inpera %}
+            <div class="min-w-[290px] max-w-[290px] bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-[#d1953f]/50 hover:shadow-md transition-all duration-300 group cursor-pointer">
+                <div class="h-40 bg-cover bg-center" style="background-image: url('{{ curso.imagem }}')"></div>
                 <div class="p-4">
-                    <span class="text-xs text-blue-400 font-bold">{{ curso.categoria }}</span>
-                    <h3 class="font-bold text-sm mt-1">{{ curso.titulo }}</h3>
+                    <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">{{ curso.categoria }}</span>
+                    <h3 class="font-bold text-sm mt-2 text-gray-800 group-hover:text-[#d1953f] transition-colors line-clamp-2 h-10">{{ curso.titulo }}</h3>
+                    <div class="mt-2 text-xs text-gray-400 flex items-center gap-1">
+                        <i class="fa-regular fa-clock"></i> <span>{{ curso.duracao }}</span>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="px-8 max-w-4xl mx-auto">
-        <div class="bg-slate-800 rounded-xl border border-blue-900/40 p-6">
-            <h3 class="font-bold border-b border-slate-700 pb-2 mb-4">Suporte Inteligente Inpera</h3>
-            <div id="chat-box" class="h-60 overflow-y-auto space-y-4 mb-4 p-2 bg-black/40 rounded-lg text-sm"></div>
-            <div class="flex gap-2">
-                <input type="text" id="input-p" placeholder="Dúvida sobre o Inpera..." class="flex-1 bg-slate-900 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 border border-transparent">
-                <button onclick="enviar()" class="bg-blue-600 px-6 py-2 rounded-lg text-sm font-bold">Buscar</button>
+    <!-- RECIPIENTE DO CHATBOT -->
+    <div class="px-8 max-w-4xl mx-auto mt-12">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#d1953f]/10 flex items-center justify-center text-[#d1953f]">
+                        <i class="fa-solid fa-robot text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-800">Suporte Inteligente Inpera</h3>
+                        <p class="text-[11px] text-gray-500">Mecanismo RAG integrado ao Notion ERP</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('chat-box').innerHTML=''" class="text-gray-400 hover:text-gray-600 transition-colors text-xs">
+                    <i class="fa-solid fa-arrow-rotate-left"></i> Resetar
+                </button>
+            </div>
+
+            <div id="chat-box" class="h-72 overflow-y-auto space-y-4 p-6 bg-gray-50/50 text-sm scroll-smooth">
+                <div class="flex gap-3 items-start max-w-[85%]">
+                    <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs shrink-0 mt-0.5">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div class="bg-white border border-gray-200 text-gray-700 p-3 rounded-lg rounded-tl-none shadow-sm">
+                        Olá! Sou o assistente de processos da Inpera. Como posso ajudar nas suas rotinas de retaguarda, estoque ou faturamento?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-white border-t border-gray-200 flex gap-3">
+                <input type="text" id="input-p" placeholder="Digite sua dúvida corporativa..." 
+                       class="flex-1 bg-gray-50 rounded-lg px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#d1953f] border border-gray-200 placeholder-gray-400 transition-all">
+                <button onclick="enviar()" class="bg-[#d1953f] hover:bg-[#b57f32] active:scale-95 text-white px-6 py-3 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+                    <span>Buscar</span>
+                    <i class="fa-solid fa-magnifying-glass text-xs opacity-90"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -42,17 +90,41 @@
             const box = document.getElementById('chat-box');
             if(!input.value.trim()) return;
             
-            box.innerHTML += `<div class="p-2 bg-blue-950/30 text-right">Membro: ${input.value}</div>`;
+            box.innerHTML += `
+                <div class="flex justify-end w-full">
+                    <div class="p-3 bg-[#d1953f] text-white rounded-lg rounded-tr-none max-w-[85%] shadow-sm">
+                        ${input.value}
+                    </div>
+                </div>`;
+            
+            const perguntaDigitada = input.value;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
             
             fetch('/perguntar_inpera', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ pergunta: input.value })
+                body: JSON.stringify({ pergunta: perguntaDigitada })
             })
             .then(res => res.json())
-            .then(d => { box.innerHTML += `<div class="p-2 bg-slate-700"><b>IA Inpera:</b><br>${d.resposta.replace(/\n/g, '<br>')}</div>`; })
-            input.value = "";
+            .then(d => { 
+                box.innerHTML += `
+                    <div class="flex gap-3 items-start max-w-[85%]">
+                        <div class="w-7 h-7 rounded-full bg-[#d1953f]/10 flex items-center justify-center text-[#d1953f] text-xs shrink-0 mt-0.5">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bg-white border border-gray-200 text-gray-700 p-3 rounded-lg rounded-tl-none shadow-sm">
+                            ${d.resposta.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>`;
+                box.scrollTop = box.scrollHeight;
+            })
+            .catch(() => {
+                box.innerHTML += `<div class="text-xs text-red-600 text-center">Erro de conexão.</div>`;
+                box.scrollTop = box.scrollHeight;
+            });
         }
+        document.getElementById('input-p').addEventListener('keypress', function(e) { if (e.key === 'Enter') enviar(); });
     </script>
 </body>
 </html>
