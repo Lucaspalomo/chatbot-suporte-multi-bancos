@@ -10,6 +10,12 @@
         tailwind.config = { darkMode: 'class' }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .markdown-body ul, .markdown-body ol { padding-left: 1.5rem !important; list-style-type: disc !important; }
+        .markdown-body ol { list-style-type: decimal !important; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+    </style>
 </head>
 <body class="bg-[#f4f5f7] text-gray-800 dark:bg-[#141414] dark:text-white min-h-screen pb-10 font-sans transition-colors duration-300">
 
@@ -78,7 +84,6 @@
                     </div>
                     <div class="bg-white dark:bg-gray-800/40 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-3 rounded-lg rounded-tl-none">
                         Olá! Sou o assistente da Facilite. Como posso ajudar você hoje?
-
                     </div>
                 </div>
             </div>
@@ -124,6 +129,19 @@
             input.value = "";
             box.scrollTop = box.scrollHeight;
             
+            const carregandoId = 'loading-' + Date.now();
+            
+            box.innerHTML += `
+                <div id="${carregandoId}" class="flex gap-3 items-start max-w-[85%] animate-pulse">
+                    <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 text-xs shrink-0 mt-0.5">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 p-3 rounded-lg rounded-tl-none text-gray-400">
+                        Buscando no Notion...
+                    </div>
+                </div>`;
+            box.scrollTop = box.scrollHeight;
+            
             fetch('/perguntar_facilite', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -131,22 +149,30 @@
             })
             .then(res => res.json())
             .then(d => { 
+                const loadingEl = document.getElementById(carregandoId);
+                if(loadingEl) loadingEl.remove();
+
+                const respostaEmHtml = marked.parse(d.resposta);
+
                 box.innerHTML += `
                     <div class="flex gap-3 items-start max-w-[85%]">
                         <div class="w-7 h-7 rounded-full bg-[#93092b]/20 flex items-center justify-center text-[#93092b] text-xs shrink-0 mt-0.5">
                             <i class="fa-solid fa-robot"></i>
                         </div>
-                        <div class="bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-gray-200 p-3 rounded-lg rounded-tl-none">
-                            ${d.resposta.replace(/\n/g, '<br>')}
+                        <div class="bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-gray-200 p-3 rounded-lg rounded-tl-none markdown-body">
+                            ${respostaEmHtml}
                         </div>
                     </div>`;
                 box.scrollTop = box.scrollHeight;
             })
             .catch(() => {
+                const loadingEl = document.getElementById(carregandoId);
+                if(loadingEl) loadingEl.remove();
                 box.innerHTML += `<div class="text-xs text-red-400 text-center">Falha na comunicação.</div>`;
                 box.scrollTop = box.scrollHeight;
             });
         }
+
         document.getElementById('input-p').addEventListener('keypress', function(e) { if (e.key === 'Enter') enviar(); });
     </script>
 </body>
